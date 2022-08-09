@@ -10,6 +10,9 @@
                     <h1 class="m-0">SubCategory</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
+                    @if (Session::get('message'))
+                         $notification = array('messege' => 'SubCategory Deleted!', 'alert-type' => 'success');
+                    @endif
                     <ol class="breadcrumb float-sm-right">
                      <button class="btn btn-primary" data-toggle="modal" data-target="#NewSubCategoryModal">+ Add New</button>
                     </ol>
@@ -88,7 +91,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="category_name">SubCategory Name</label>
+                        <label for="subcategory_name">SubCategory Name</label>
                         <input type="text" class="form-control" name="subcategory_name" required>
                         <small id="emailHelp" class="form-text text-muted">This is your sub category.</small>
                     </div>
@@ -101,10 +104,11 @@
           </div>
         </div>
     </div>
+    
 
     <!-- subcategory Edit modal -->
 
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="EditSubCategoryModal" >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -113,9 +117,32 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div id="modal_body">
-
-            </div>
+           
+                <form action="{{route('sucategory.update')}}" method="Post" enctype="multipart/form-data" id="EditSubCategoryForm">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="ID" id="IDEdit">
+                        <div class="form-group">
+                            <label for="category_name">Category Name</label>
+                            <select name="category_id" class="form-control">
+                                @foreach ($category as $row)
+                                    <option value="{{ $row->id }}">{{ $row->category_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subcategory_name">SubCategory Name</label>
+                            <input type="text" class="form-control" id="EditSubCategoryName"  name="subcategory_name" required>
+                            <small id="emailHelp" class="form-text text-muted">This is your subcategory.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="Submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+           
           </div>
         </div>
     </div>
@@ -123,6 +150,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script>
     $(document).ready(function(){
+
         $.noConflict();
         var SubCategoryList = $('#SubCategoryList').DataTable({
             serverSide:true,
@@ -136,42 +164,91 @@
                 {data:'category_id'},
                 {data:'subcategory_name'},
                 {data:'subcat_slug'},
-                {data:'subcat_slug'},
+                {data:'category_name'},
                 {data:'action',name:'action'}
             ]
         });
 
-    $('#SubmitBtn').on('click',function(e){
-        e.preventDefault()
-        $.ajax({
-            type:"POST",
-            url:"{{route('subcategory.store')}}",
-            data:$('#NewSubCategoryForm').serializeArray(),
-            success: function(data){
-                $('#NewSubCategoryForm')[0].reset();
-                $('#NewSubCategoryModal').modal('hide');
-                SubCategoryList.draw(false);
-            },
-            error:function(data){
-                console.log('Error While adding new Subcategory' + data);
-            }
-        })
+        $('#SubmitBtn').on('click',function(e){
+            e.preventDefault()
+            $.ajax({
+                type:"POST",
+                url:"{{route('subcategory.store')}}",
+                data:$('#NewSubCategoryForm').serializeArray(),
+                success: function(data){
+            
+                    $('#NewSubCategoryForm')[0].reset();
+                    $('#NewSubCategoryModal').modal('hide');
+                    SubCategoryList.draw(false);
+                },
+                error:function(data){
+                    console.log('Error While adding new Subcategory' + data);
+                }
+            })
+            
+        });
+
+        $('body').on('click','#DeleteBtn',function(e){
+            e.preventDefault();
+            var ID = $(this).data('id');
         
-    });    
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to delete this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                $.ajax({
+                    type:'GET',
+                    url:"/subcategory/delete/"+ID,
+                    success:function(data){
+                        SubCategoryList.draw(false);
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+                    },
+                    error:function(data){
+                        Swal.fire(
+                            'Error!',
+                            'Delete failed !',
+                            'error'
+                        );
+                        console.log(data);
+                    },
+                });
+    
+                
+            }
+            });
+            
+        });
+
+        $('body').on('click','#EditBtn',function(e){
+            e.preventDefault();
+            var ID = $(this).data('id');
+            console.log(ID);
+            $.ajax({
+                type: "GET",
+                url: "/subcategory/edit/"+ID,
+                success: function (data) {
+                    $('#EditSubCategoryForm')[0].reset();
+                    $('#EditSubCategoryName').val(data['subcategory_name']);
+                    $('#EditSubCategoryModal').modal('show');
+                },
+                error: function(data) {
+                    console.log(data);
+                },
+            });
+            
+            
+        })
 
     });
 </script>
-
-{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script type="text/javascript">
-	$('body').on('click','.edit', function(e){
-        // $.noConflict();
-        e.preventDefault();
-		let subcat_id = $(this).data('id');
-        // console.log(sub_cat);
-        $.get("subcategory/edit/"+subcat_id,function(data){
-            $("#modal_body").html(data);
-        });
-	});
-</script> --}}
 @endsection   

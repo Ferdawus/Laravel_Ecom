@@ -109,15 +109,15 @@
   
 
    <!--sweet alert -->
-   <script src="{{ asset('/backend/plugins/sweetalert/sweetalert.min.js') }}"></script>
-   
+   {{--  <script src="{{ asset('/backend/plugins/sweetalert2/sweetalert2.min.js') }}"></script>  --}}
+   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    <!--toastr alert -->
    <script src="{{asset('/backend/plugins/toastr/toastr.min.js')}}"></script>
  
 
 
 <!-- delete sweet alert script -->
-<script>  
+{{--  <script>  
   $(document).on("click", "#delete", function(e){
       e.preventDefault();
       var link = $(this).attr("href");
@@ -136,7 +136,7 @@
            }
          });
      });
-</script>
+</script>  --}}
    
    <!-- before logout showing alert message-->
    <script>  
