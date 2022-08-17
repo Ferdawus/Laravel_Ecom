@@ -80,7 +80,12 @@ class SubCategoryController extends Controller
     }
     public function update()
     {
-        
+        // $data=array();
+    	// $data['category_id']=$request->category_id;
+    	// $data['subcategory_name']=$request->subcategory_name;
+    	// $data['subcat_slug']=Str::slug($request->subcategory_name, '-');
+    	// DB::table('subcategories')->where('id',$request->id)->update($data);
+        return redirect()->back();
     }
 
 }

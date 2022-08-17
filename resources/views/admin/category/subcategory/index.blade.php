@@ -45,20 +45,7 @@
                                 </thead>
 
                                 <tbody>
-                                    {{-- @foreach ($data as $key=>$row)
-                                        <tr>
-                                            <td>{{ $key+1 }}</td>
-                                            <td>{{ $row->subcategory_name }}</td>
-                                            <td>{{ $row->subcat_slug }}</td>
-                                            <td>{{ $row->category_name}}</td>
-                                            <td>
-                                                <a href="" class="btn btn-info btn-sm edit" id="EditBtn" data-id="{{ $row->id }}" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i></a>
-
-                                                <a href="{{route('subcategory.delete',$row->id)}}" id="delete" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
-                                            </td>
-                                            
-                                        </tr>
-                                    @endforeach --}}
+                                   
                                 </tbody>
                             </table>
                         </div>
@@ -117,32 +104,30 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-           
-                <form action="{{route('sucategory.update')}}" method="Post" enctype="multipart/form-data" id="EditSubCategoryForm">
-                    @csrf
-                    <div class="modal-body">
-                        <input type="hidden" name="ID" id="IDEdit">
-                        <div class="form-group">
-                            <label for="category_name">Category Name</label>
-                            <select name="category_id" class="form-control">
-                                @foreach ($category as $row)
-                                    <option value="{{ $row->id }}">{{ $row->category_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="subcategory_name">SubCategory Name</label>
-                            <input type="text" class="form-control" id="EditSubCategoryName"  name="subcategory_name" required>
-                            <small id="emailHelp" class="form-text text-muted">This is your subcategory.</small>
-                        </div>
+            <form action="{{route('sucategory.update')}}" method="Post" enctype="multipart/form-data" id="EditSubCategoryForm">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="IDEdit">
+                    <div class="form-group">
+                        <label for="category_name">Category Name</label>
+                        <select name="category_id" class="form-control">
+                            @foreach ($category as $row)
+                                <option value="{{ $row->id }}">{{ $row->category_name }}</option>
+                            @endforeach
+                        </select>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="Submit" class="btn btn-primary">Update</button>
+                    
+                    <div class="form-group">
+                        <label for="subcategory_name">SubCategory Name</label>
+                        <input type="text" class="form-control" id="EditSubCategoryName"  name="subcategory_name" required>
+                        <small id="emailHelp" class="form-text text-muted">This is your subcategory.</small>
                     </div>
-                </form>
-           
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="Submit" id="UpdateBtn" class="btn btn-primary">Update</button>
+                </div>
+            </form>
           </div>
         </div>
     </div>
@@ -232,7 +217,7 @@
         $('body').on('click','#EditBtn',function(e){
             e.preventDefault();
             var ID = $(this).data('id');
-            console.log(ID);
+            {{--  console.log(ID);  --}}
             $.ajax({
                 type: "GET",
                 url: "/subcategory/edit/"+ID,
@@ -247,8 +232,13 @@
             });
             
             
-        })
-
+        });
+        $('#UpdateBtn').on('click',function(e){
+            e.preventDefault();
+            
+            var ID = $('#IDEdit').val();
+            console.log(ID);
+        });
     });
 </script>
 @endsection   
