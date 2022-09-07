@@ -107,7 +107,7 @@
             <form action="{{route('sucategory.update')}}" method="Post" enctype="multipart/form-data" id="EditSubCategoryForm">
                 @csrf
                 <div class="modal-body">
-                    <input type="hidden" name="id" id="IDEdit">
+                    <input type="hidden" value="{{$row->id}}" id="IDEdit">
                     <div class="form-group">
                         <label for="category_name">Category Name</label>
                         <select name="category_id" class="form-control">
@@ -217,6 +217,7 @@
         $('body').on('click','#EditBtn',function(e){
             e.preventDefault();
             var ID = $(this).data('id');
+
             {{--  console.log(ID);  --}}
             $.ajax({
                 type: "GET",
@@ -235,9 +236,28 @@
         });
         $('#UpdateBtn').on('click',function(e){
             e.preventDefault();
-            
             var ID = $('#IDEdit').val();
-            console.log(ID);
+            {{-- console.log(ID); --}}
+             $.ajax({
+            type: "POST",
+            url: "/subcategory/update/"+ID,
+            data: $('#EditSubCategoryForm').serializeArray(),
+            success: function (data) {
+                $('#EditSubCategoryForm')[0].reset();
+                $('#EditSubCategoryModal').modal('hide');
+                Swal.fire(
+                    'success',
+                    'SubCategory updated successfully',
+                    'success'
+                );
+            },
+            error:function(data){
+                console.log(data);
+            }
+        });
+
+
+            
         });
     });
 </script>
