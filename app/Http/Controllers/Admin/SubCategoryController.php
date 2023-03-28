@@ -63,10 +63,28 @@ class SubCategoryController extends Controller
     public function edit($id)
     {
         $category = DB::table('categories')->get();
-        return $data     = DB::table('subcategories')->where('id',$id)->first();
+        $data  = DB::table('subcategories')->where('id',$id)->first();
+        $response_data = [
+            'category' => $category,
+            'data'     => $data,
+        ];
+        return json_encode($response_data);
+        
         // dd($data);
 
-        return view('admin.category.subcategory.index',compact('data','cateory'));
+        // return view('admin.category.subcategory.index',compact('data','category'));
+    }
+    public function update(Request $request)
+    {
+        dd($request->id);
+        // return "okk";   
+        // dd($request->all());
+        // $data=array();
+    	// $data['category_id']=$request->category_id;
+    	// $data['subcategory_name']=$request->subcategory_name;
+    	// $data['subcat_slug']=Str::slug($request->subcategory_name, '-');
+    	// DB::table('subcategories')->where('id',$request->id)->update($data);
+        // return redirect()->back();
     }
     /**
      * SubCategory delete data
@@ -78,15 +96,6 @@ class SubCategoryController extends Controller
         $notification = array('messege' => 'SubCategory Deleted!', 'alert-type' => 'success');
         return redirect()->back()->with('message');
     }
-    public function update(Request $request)
-    {
-        // dd($request->all());
-        $data=array();
-    	$data['category_id']=$request->category_id;
-    	$data['subcategory_name']=$request->subcategory_name;
-    	$data['subcat_slug']=Str::slug($request->subcategory_name, '-');
-    	DB::table('subcategories')->where('id',$request->id)->update($data);
-        return redirect()->back();
-    }
+    
 
 }
