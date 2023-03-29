@@ -47,7 +47,7 @@ Route::Group(['namespace'=>'App\Http\Controllers\Admin','middleware' => 'is_admi
         Route::post('/store', [SubCategoryController::class,'store'])->name('subcategory.store');
         Route::get('/delete/{id}', [SubCategoryController::class,'destroy'])->name('subcategory.delete');
         Route::get('/edit/{id}', [SubCategoryController::class,'edit']);
-        Route::post('/update', [SubCategoryController::class,'update'])->name('sucategory.update');
+        Route::post('/update/{id}', [SubCategoryController::class,'update'])->name('subcategory.update');
     });
 
      /*

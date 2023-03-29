@@ -67,8 +67,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ route('subcategory.store') }}" method="POST" id="NewSubCategoryForm"
-                        enctype="multipart/form-data">
+                    <form method="POST" id="NewSubCategoryForm" enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body">
 
@@ -88,7 +87,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="Submit" id="SubmitBtn" class="btn btn-primary">Submit</button>
+                            <button type="submit" id="SubmitBtn" class="btn btn-primary">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -107,32 +106,33 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ route('sucategory.update') }}" method="Post" enctype="multipart/form-data"
-                        id="EditSubCategoryForm">
-                        @csrf
-                        <div class="modal-body">
-                            <input type="hidden" name="ID" id="IDEdit">
-                            <div class="form-group">
-                                <label for="category_name">Category Name</label>
-                                <select name="category_id" class="form-control">
-                                    @foreach ($category as $row)
-                                        <option value="{{ $row->id }}">{{ $row->category_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                    {{ Form::open(['method' => 'POST', 'id' => 'EditSubCategoryForm', 'files' => true]) }}
+                    {{-- <form method="POST" enctype="multipart/form-data" id="EditSubCategoryForm"> --}}
+                    {{-- @csrf --}}
+                    <div class="modal-body">
+                        <input type="hidden" name="ID" id="IDEdit">
+                        <div class="form-group">
+                            <label for="category_name">Category Name</label>
+                            <select name="category_id" class="form-control">
+                                @foreach ($category as $row)
+                                    <option value="{{ $row->id }}">{{ $row->category_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                            <div class="form-group">
-                                <label for="subcategory_name">SubCategory Name</label>
-                                <input type="text" class="form-control" id="EditSubCategoryName" name="subcategory_name"
-                                    required>
-                                <small id="emailHelp" class="form-text text-muted">This is your subcategory.</small>
-                            </div>
+                        <div class="form-group">
+                            <label for="subcategory_name">SubCategory Name</label>
+                            <input type="text" class="form-control" id="EditSubCategoryName" name="subcategory_name"
+                                required>
+                            <small id="emailHelp" class="form-text text-muted">This is your subcategory.</small>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="Submit" id="UpdateBtn" class="btn btn-primary">Update</button>
-                        </div>
-                    </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" id="UpdateBtn" class="btn btn-primary">Update</button>
+                    </div>
+                    {{ Form::close() }}
+                    {{-- </form> --}}
                 </div>
             </div>
         </div>
@@ -142,6 +142,8 @@
         $(document).ready(function() {
 
             $.noConflict();
+
+
             var SubCategoryList = $('#SubCategoryList').DataTable({
                 serverSide: true,
                 processing: true,
@@ -180,6 +182,7 @@
                         $('#NewSubCategoryForm')[0].reset();
                         $('#NewSubCategoryModal').modal('hide');
                         SubCategoryList.draw(false);
+                        toastr.success('Data saved successfully', 'Success');
                     },
                     error: function(data) {
                         console.log('Error While adding new Subcategory' + data);
@@ -232,15 +235,15 @@
             $('body').on('click', '#EditBtn', function(e) {
                 e.preventDefault();
                 var ID = $(this).data('id');
-
                 // console.log(ID);
                 $.ajax({
                     type: "GET",
                     url: "/subcategory/edit/" + ID,
                     dataType: 'JSON',
                     success: function(data) {
-                        console.log(data.data.subcategory_name);
-                        $('#EditSubCategoryForm')[0].reset();
+                        // console.log(data);
+                        $('#IDEdit').val(data.data['id']);
+                        // $('#EditSubCategoryForm')[0].reset();
                         $('#EditSubCategoryName').val(data.data['subcategory_name']);
                         $('#EditSubCategoryModal').modal('show');
                     },
@@ -251,31 +254,28 @@
 
 
             });
+
             $('#UpdateBtn').on('click', function(e) {
                 e.preventDefault();
                 var ID = $('#IDEdit').val();
-                console.log(ID);
                 $.ajax({
                     type: "POST",
                     url: "/subcategory/update/" + ID,
                     data: $('#EditSubCategoryForm').serializeArray(),
                     success: function(data) {
+
                         $('#EditSubCategoryForm')[0].reset();
                         $('#EditSubCategoryModal').modal('hide');
-                        Swal.fire(
-                            'success',
-                            'SubCategory updated successfully',
-                            'success'
-                        );
+                        SubCategoryList.draw(false);
+                        toastr.success('Data update successfully !', 'Success');
                     },
                     error: function(data) {
-                        console.log(data);
+                        console.log('Error While update Subcategory' + data);
                     }
-                });
-
-
+                })
 
             });
+
         });
     </script>
 @endsection

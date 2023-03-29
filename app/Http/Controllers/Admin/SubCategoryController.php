@@ -53,7 +53,7 @@ class SubCategoryController extends Controller
         $data['subcat_slug']      = Str::slug($request->subcategory_name, '-');
         // dd($data);
 
-        $notification = array('messege' => 'SubCategory inserted!', 'alert-type' => 'success');
+        
         DB::table('subcategories')->insert($data);
         return redirect()->back();
     }
@@ -64,11 +64,16 @@ class SubCategoryController extends Controller
     {
         $category = DB::table('categories')->get();
         $data  = DB::table('subcategories')->where('id',$id)->first();
-        $response_data = [
+        // $data
+        return response()->json([
             'category' => $category,
-            'data'     => $data,
-        ];
-        return json_encode($response_data);
+            'data'     => $data
+        ]);
+        // $response_data = [
+        //     'category' => $category,
+        //     'data'     => $data,
+        // ];
+        // return json_encode($response_data);
         
         // dd($data);
 
@@ -76,15 +81,15 @@ class SubCategoryController extends Controller
     }
     public function update(Request $request)
     {
-        dd($request->id);
+       
         // return "okk";   
         // dd($request->all());
-        // $data=array();
-    	// $data['category_id']=$request->category_id;
-    	// $data['subcategory_name']=$request->subcategory_name;
-    	// $data['subcat_slug']=Str::slug($request->subcategory_name, '-');
-    	// DB::table('subcategories')->where('id',$request->id)->update($data);
-        // return redirect()->back();
+        $data=array();
+    	$data['category_id']=$request->category_id;
+    	$data['subcategory_name']=$request->subcategory_name;
+    	$data['subcat_slug']=Str::slug($request->subcategory_name, '-');
+    	DB::table('subcategories')->where('id',$request->id)->update($data);
+        return redirect()->back();
     }
     /**
      * SubCategory delete data
@@ -92,7 +97,6 @@ class SubCategoryController extends Controller
     public function destroy($id)
     {
         DB::table('subcategories')->where('id',$id)->delete();
-        
         $notification = array('messege' => 'SubCategory Deleted!', 'alert-type' => 'success');
         return redirect()->back()->with('message');
     }
